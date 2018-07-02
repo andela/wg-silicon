@@ -91,12 +91,12 @@ INSTALLED_APPS = (
 # added list of external libraries to be installed by bower
 BOWER_INSTALLED_APPS = (
     'jquery#2.1.x',
-    'bootstrap',
+    'bootstrap#3.3.7',
     'd3',
-    'shariff',
+    'shariff#1.26',
     'tinymce-dist',
     'DataTables',
-    'components-font-awesome',
+    'components-font-awesome4.6.x',
     'tinymce',
     'metrics-graphics',
     'devbridge-autocomplete#1.2.x',
@@ -109,6 +109,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 
     # Javascript Header. Sends helper headers for AJAX
     'wger.utils.middleware.JavascriptAJAXRedirectionMiddleware',

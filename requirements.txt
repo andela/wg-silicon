@@ -28,3 +28,34 @@ django-cors-headers
 
 # Python3 compatibility
 six
+alabaster==0.7.11
+Babel==2.6.0
+certifi==2018.4.16
+chardet==3.0.4
+coverage==4.5.1
+django-appconf==1.0.2
+django-debug-toolbar==1.9.1
+docutils==0.14
+gunicorn==19.8.1
+html5lib==1.0.1
+idna==2.7
+imagesize==1.0.0
+Jinja2==2.10
+MarkupSafe==1.0
+packaging==17.1
+pep8==1.7.1
+Pygments==2.2.0
+pyparsing==2.2.0
+python-dateutil==2.7.3
+pytz==2018.5
+rcssmin==1.0.6
+rjsmin==1.0.12
+snowballstemmer==1.2.1
+sphinxcontrib-websupport==1.1.0
+sqlparse==0.2.4
+urllib3==1.23
+webencodings==0.5.1
+dj-database-url
+django-heroku 
+psycopg2 
+whitenoise
