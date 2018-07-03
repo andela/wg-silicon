@@ -49,6 +49,8 @@ coverage.xml
 *.sqlite
 /CACHE
 
+setting*.py
+
 # Sphinx documentation
 docs/_build/
 
