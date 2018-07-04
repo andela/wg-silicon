@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import migrations, models
+from django.db import migrations
 
 
 def create_usercache(apps, schema_editor):
@@ -16,8 +16,8 @@ def create_usercache(apps, schema_editor):
     for user in User.objects.all():
 
         #
-        # This is the logic of get_user_last_activity at the time this migration
-        # was created.
+        # This is the logic of get_user_last_activity at the time this
+        # migration was created.
         #
         last_activity = None
 
@@ -27,7 +27,8 @@ def create_usercache(apps, schema_editor):
             last_activity = last_log.date
 
         # Check workout sessions
-        last_session = WorkoutSession.objects.filter(user=user).order_by('date').last()
+        last_session = WorkoutSession.objects.filter(
+            user=user).order_by('date').last()
         if last_session:
             last_session = last_session.date
 
@@ -60,6 +61,4 @@ class Migration(migrations.Migration):
         ('manager', '0004_auto_20150609_1603'),
     ]
 
-    operations = [
-        migrations.RunPython(create_usercache, delete_usercache)
-    ]
+    operations = [migrations.RunPython(create_usercache, delete_usercache)]

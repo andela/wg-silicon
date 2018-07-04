@@ -10,6 +10,10 @@ django-formtools>=1.0,<1.1
 bleach
 python-mimeparse
 pillow
+flake8
+autopep8
+pycodestyle
+yapf
 easy-thumbnails
 django_compressor
 icalendar

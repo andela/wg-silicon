@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations
 
 
 class Migration(migrations.Migration):
@@ -13,7 +13,11 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='weightentry',
-            options={'verbose_name': 'Weight entry', 'get_latest_by': 'date', 'ordering': ['date']},
+            options={
+                'verbose_name': 'Weight entry',
+                'get_latest_by': 'date',
+                'ordering': ['date']
+            },
         ),
         migrations.RenameField(
             model_name='weightentry',

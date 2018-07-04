@@ -29,7 +29,8 @@ class GymMembersCsvExportTestCase(WorkoutManagerTestCase):
         '''
         Helper function to test the CSV export
         '''
-        response = self.client.get(reverse('gym:export:users', kwargs={'gym_pk': 1}))
+        response = self.client.get(
+            reverse('gym:export:users', kwargs={'gym_pk': 1}))
         gym = Gym.objects.get(pk=1)
 
         if fail:
@@ -39,8 +40,7 @@ class GymMembersCsvExportTestCase(WorkoutManagerTestCase):
             self.assertEqual(response['Content-Type'], 'text/csv')
 
             today = datetime.date.today()
-            filename = 'User-data-gym-{gym}-{t.year}-{t.month:02d}-{t.day:02d}.csv'.\
-                format(t=today, gym=gym.id)
+            filename = 'User-data-gym-{gym}-{t.year}-{t.month:02d}-{t.day:02d}.csv'.format(t=today, gym=gym.id)   # noqa
             self.assertEqual(response['Content-Disposition'],
                              'attachment; filename={0}'.format(filename))
             self.assertGreaterEqual(len(response.content), 1000)
@@ -60,14 +60,8 @@ class GymMembersCsvExportTestCase(WorkoutManagerTestCase):
         Test the CSV export by unauthorized users
         '''
 
-        for username in ('manager3',
-                         'manager4',
-                         'test',
-                         'member1',
-                         'member2',
-                         'member3',
-                         'member4',
-                         'member5'):
+        for username in ('manager3', 'manager4', 'test', 'member1', 'member2',
+                         'member3', 'member4', 'member5'):
             self.user_login(username)
             self.export_csv(fail=True)
 

@@ -22,4 +22,4 @@ class ExerciseConfig(AppConfig):
     verbose_name = "Exercise"
 
     def ready(self):
-        import wger.exercises.signals
+        import wger.exercises.signals  # noqa

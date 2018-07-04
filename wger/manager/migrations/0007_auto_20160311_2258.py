@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import migrations, models
+from django.db import migrations
 
 
 def convert_logs(apps, schema_editor):
@@ -32,6 +32,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(convert_logs, reverse_code=migrations.RunPython.noop),
-        migrations.RunPython(convert_settings, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(
+            convert_logs, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(
+            convert_settings, reverse_code=migrations.RunPython.noop),
     ]

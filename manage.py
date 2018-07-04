@@ -3,10 +3,7 @@ import sys
 
 from django.core.management import execute_from_command_line
 
-from tasks import (
-    setup_django_environment,
-    get_user_config_path
-)
+from tasks import (setup_django_environment, get_user_config_path)
 
 if __name__ == "__main__":
 
