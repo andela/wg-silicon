@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 {% load i18n staticfiles wger_extras django_bootstrap_breadcrumbs %}
 
-{% block title %}{{gym}}{% endblock %}
+{% block title %}{{gym}} -
+    {% if active_users %}
+        {% trans "Active members" %} 
+    {% else %}
+        {% trans "Inactive members" %}
+    {% endif %}
+{% endblock %}
 
 {% block breadcrumbs %}
     {{ block.super }}
@@ -319,6 +325,12 @@
 {#         #}
 {% block options %}
 {% if perms.gym.manage_gym or perms.gym.manage_gyms %}
+    <a href="{% url 'gym:gym:user-list' gym.pk %}" class="btn btn-primary btn-sm {% if active_users %} disabled {% endif %}">
+        {% trans "Active members" %}
+    </a>
+    <a href="{% url 'gym:gym:inactive-user-list' gym.pk 'inactive' %}" class="btn btn-danger btn-sm {% if not active_users %} disabled {% endif %}">
+        {% trans "Inactive members" %}
+    </a>
     <a href="{% url 'gym:gym:add-user' gym.pk %}" class="btn btn-success btn-sm wger-modal-dialog">
         {% trans "Add member" %}
     </a>

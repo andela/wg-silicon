@@ -72,6 +72,7 @@ class GymUserListView(LoginRequiredMixin, WgerMultiplePermissionRequiredMixin,
         '''
         Only managers and trainers for this gym can access the members
         '''
+        self.users_status = False if 'status' in self.kwargs else True
         if request.user.has_perm('gym.manage_gyms') \
             or ((request.user.has_perm('gym.manage_gym')
                  or request.user.has_perm('gym.gym_trainer'))
@@ -87,14 +88,17 @@ class GymUserListView(LoginRequiredMixin, WgerMultiplePermissionRequiredMixin,
         out = {'admins': [], 'members': []}
 
         for u in Gym.objects.get_members(
-                self.kwargs['pk']).select_related('usercache'):
+                self.kwargs['pk'],
+                user_status=self.users_status).select_related('usercache'):
             out['members'].append({
                 'obj': u,
                 'last_log': u.usercache.last_activity
             })
 
         # admins list
-        for u in Gym.objects.get_admins(self.kwargs['pk']):
+        for u in Gym.objects.get_admins(
+            self.kwargs['pk'], user_status=self.users_status
+        ):
             out['admins'].append({
                 'obj': u,
                 'perms': {
@@ -114,6 +118,7 @@ class GymUserListView(LoginRequiredMixin, WgerMultiplePermissionRequiredMixin,
         context['gym'] = Gym.objects.get(pk=self.kwargs['pk'])
         context['admin_count'] = len(context['object_list']['admins'])
         context['user_count'] = len(context['object_list']['members'])
+        context['active_users'] = self.users_status
         context['user_table'] = {
             'keys': [_('ID'),
                      _('Username'),

@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from wger.settings_global import *
-import django_heroku
-import dj_database_url
 
 # Use 'DEBUG = True' to get more details for server errors
 DEBUG = True
@@ -17,21 +15,17 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'wger',
-        'USER': 'wger',
-        'PASSWORD': 'wger',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': './database.sqlite',
+        'USER': '',
+        'PASSWORD': '',
         'HOST': '',
         'PORT': '',
     }
 }
 
-if os.environ.get("TRIGGER") == 'TRUE':
-    DATABASES['default'] = dj_database_url.config()
-
 # Make this unique, and don't share it with anybody.
-if os.environ.get("SECRET"):
-    SECRET_KEY = os.environ.get("SECRET")
+SECRET_KEY = ')8-woct4l-fk2(gs&z@uyizjnaw_yg#5rm8$m_xx8szpb)lyxp'
 
 # Your reCaptcha keys
 RECAPTCHA_PUBLIC_KEY = ''
@@ -45,7 +39,7 @@ SITE_URL = 'http://localhost:8000'
 
 # Path to uploaded files
 # Absolute filesystem path to the directory that will hold user-uploaded files.
-MEDIA_ROOT = '/Users/daktari/.local/share/wger/media'
+MEDIA_ROOT = '/Users/emery/.local/share/wger/media'
 MEDIA_URL = '/media/'
 
 # Allow all hosts to access the application. Change if used in production.
@@ -63,5 +57,6 @@ WGER_SETTINGS['EMAIL_FROM'] = 'wger Workout Manager <wger@example.com>'
 
 # Your twitter handle, if you have one for this instance.
 #WGER_SETTINGS['TWITTER'] = ''
+import django_heroku
 
 django_heroku.settings(locals())
