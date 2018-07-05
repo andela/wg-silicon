@@ -16,6 +16,7 @@
 # along with Workout Manager.  If not, see <http://www.gnu.org/licenses/>.
 
 from rest_framework import serializers
+from django.contrib.auth.models import User
 
 from wger.core.models import (UserProfile, Language, DaysOfWeek, License,
                               RepetitionUnit, WeightUnit)
@@ -80,3 +81,25 @@ class WeightUnitSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WeightUnit
+
+
+class UserSerializer(serializers.ModelSerializer):
+    '''
+    Serializer user basic info
+    '''
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'username', 'email', 'password')
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def check_valid_fields(self, data):
+        '''
+        Data for the user table columns only
+        '''
+        user_valid_data = {}
+        valid_fields = [*self.__class__.Meta.fields, 'password']
+        for field in valid_fields:
+            field_value = data.get(field)
+            if field_value:
+                user_valid_data[field] = field_value
+        return user_valid_data

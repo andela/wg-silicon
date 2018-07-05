@@ -78,6 +78,7 @@ v1_api.register(core_api.LanguageResource())
 v1_api.register(core_api.DaysOfWeekResource())
 v1_api.register(core_api.UserProfileResource())
 v1_api.register(core_api.LicenseResource())
+v1_api.register(core_api.UserResource())
 
 # /api/v2 - django rest framework
 router = routers.DefaultRouter()
@@ -110,6 +111,7 @@ router.register(
 router.register(
     r'daysofweek', core_api_views.DaysOfWeekViewSet, base_name='daysofweek')
 router.register(r'license', core_api_views.LicenseViewSet, base_name='license')
+router.register(r'register-user', core_api_views.UserViewSet, base_name='register-user')
 router.register(
     r'setting-repetitionunit',
     core_api_views.RepetitionUnitViewSet,

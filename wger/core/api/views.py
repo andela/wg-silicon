@@ -15,16 +15,25 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Workout Manager.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.contrib.auth.models import User
-from rest_framework import viewsets
+import json
+from django.contrib.auth.models import User, Group, Permission
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
+from django.http import HttpResponse
+from django.db.utils import IntegrityError
 
 from wger.core.models import (UserProfile, Language, DaysOfWeek, License,
                               RepetitionUnit, WeightUnit)
 from wger.core.api.serializers import (
-    UsernameSerializer, LanguageSerializer, DaysOfWeekSerializer,
-    LicenseSerializer, RepetitionUnitSerializer, WeightUnitSerializer)
+    UsernameSerializer,
+    LanguageSerializer,
+    DaysOfWeekSerializer,
+    LicenseSerializer,
+    RepetitionUnitSerializer,
+    WeightUnitSerializer,
+    UserSerializer
+)
 from wger.core.api.serializers import UserprofileSerializer
 from wger.utils.permissions import UpdateOnlyPermission, WgerPermission
 
@@ -108,3 +117,55 @@ class WeightUnitViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = WeightUnitSerializer
     ordering_fields = '__all__'
     filter_fields = ('name', )
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    '''
+    API endpoint for creating new users
+    '''
+    is_private = True
+    serializer_class = UserSerializer
+    ordering_fields = (
+        'first_name', 'last_name', 'username', 'email', 'password'
+    )
+    queryset = User.objects.all()
+
+    def create(self, request):
+        '''
+        Create a user via a REST API
+        '''
+        api_user = self.request.user
+        creator_profile = UserProfile.objects.get(user=api_user)
+
+        # Check if user has rights to create users via API
+        allowed_user = self.validate_user_api_rights(api_user)
+        if isinstance(allowed_user, HttpResponse):
+            return allowed_user
+
+        serializer = UserSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors)
+
+        # Create user
+        try:
+            serializer = serializer.check_valid_fields(request.data)
+            new_user = User.objects.create_user(**serializer)
+            new_user.save()
+        except IntegrityError:
+            return Response({'Message': 'User already exist'},
+                            status=status.HTTP_409_CONFLICT)
+
+        # flag who created the user
+        new_user.userprofile.created_by = creator_profile.user.username
+        new_user.userprofile.save()
+
+        return Response({'Message': 'User successfully created'},
+                        status=status.HTTP_201_CREATED)
+
+    def validate_user_api_rights(self, api_user=None):
+        '''
+        Validate that user has the right to create users
+        '''
+        if not api_user.userprofile.add_user_enabled:
+            msg = {'Message': 'Request wger Admin for API user creation rights.'}
+            return Response(msg, status=status.HTTP_403_FORBIDDEN)

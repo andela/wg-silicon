@@ -40,6 +40,22 @@ class UserProfileResource(ModelResource):
         authorization = UserObjectsOnlyAuthorization()
 
 
+class UserResource(ModelResource):
+    '''
+    Resource for user
+    '''
+
+    def authorized_read_list(self, object_list, bundle):
+        '''
+        Filter to own objects
+        '''
+        return object_list.filter(user=bundle.request.user)
+
+    class Meta:
+        queryset = UserProfile.objects.all()
+        authentication = ApiKeyAuthentication()
+        authorization = UserObjectsOnlyAuthorization()
+
 class LanguageResource(ModelResource):
     '''
     Resource for languages

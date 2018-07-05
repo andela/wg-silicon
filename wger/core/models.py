@@ -122,6 +122,20 @@ class UserProfile(models.Model):
     # User preferences
     #
 
+    created_by = models.CharField(editable=False,
+                                  max_length=30,
+                                  null=True,
+                                  blank=True)
+    '''
+    API key that created the user
+    '''
+
+    add_user_enabled = models.BooleanField(default=False,
+                                           editable=True)
+    '''
+    Explicitly allow creation of new accounts over the an API key.
+    '''
+
     show_comments = models.BooleanField(
         verbose_name=_('Show exercise comments'),
         help_text=_('Check to show exercise comments on the '
