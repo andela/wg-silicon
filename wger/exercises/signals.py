@@ -15,13 +15,23 @@
 # You should have received a copy of the GNU Affero General Public License
 
 from django.db.models.signals import pre_save
-from django.db.models.signals import post_delete
+from django.db.models.signals import post_delete, pre_delete
 from django.dispatch import receiver
 from easy_thumbnails.files import get_thumbnailer
 from easy_thumbnails.signal_handlers import generate_aliases
 from easy_thumbnails.signals import saved_file
 
-from wger.exercises.models import ExerciseImage
+from wger.exercises.models import ExerciseImage, Muscle
+from wger.utils.cache import cache
+
+
+@receiver(pre_delete, sender=Muscle)
+def clear_muscle_cash_on_delete(sender, instance, **kwargs):
+    '''
+    Clears the cache after muscle is deleted
+    '''
+
+    cache.clear()
 
 
 @receiver(post_delete, sender=ExerciseImage)
