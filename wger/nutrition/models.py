@@ -32,6 +32,8 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django.utils import translation
 from django.conf import settings
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 
 from wger.core.models import Language
 from wger.utils.constants import TWOPLACES
@@ -117,59 +119,71 @@ class NutritionPlan(models.Model):
         '''
         Sums the nutritional info of all items in the plan
         '''
-        use_metric = self.user.userprofile.use_metric
-        unit = 'kg' if use_metric else 'lb'
-        result = {
-            'total': {
-                'energy': 0,
-                'protein': 0,
-                'carbohydrates': 0,
-                'carbohydrates_sugar': 0,
-                'fat': 0,
-                'fat_saturated': 0,
-                'fibres': 0,
-                'sodium': 0
-            },
-            'percent': {
-                'protein': 0,
-                'carbohydrates': 0,
-                'fat': 0
-            },
-            'per_kg': {
-                'protein': 0,
-                'carbohydrates': 0,
-                'fat': 0
-            },
-        }
+        # Find nutrition item from cache if available
+        result = cache.get(cache_mapper.get_nutrition_item(self.id))
+        if not result:
+            use_metric = self.user.userprofile.use_metric
+            unit = 'kg' if use_metric else 'lb'
+            result = {'total': {'energy': 0,
+                                'protein': 0,
+                                'carbohydrates': 0,
+                                'carbohydrates_sugar': 0,
+                                'fat': 0,
+                                'fat_saturated': 0,
+                                'fibres': 0,
+                                'sodium': 0},
+                    'percent': {'protein': 0,
+                                'carbohydrates': 0,
+                                'fat': 0},
+                    'per_kg': {'protein': 0,
+                                'carbohydrates': 0,
+                                'fat': 0},
+                    }
+            # Energy
+            for meal in self.meal_set.select_related():
+                values = meal.get_nutritional_values(use_metric=use_metric)
+                for key in result['total'].keys():
+                    result['total'][key] += values[key]
 
-        # Energy
-        for meal in self.meal_set.select_related():
-            values = meal.get_nutritional_values(use_metric=use_metric)
-            for key in result['total'].keys():
-                result['total'][key] += values[key]
+            energy = result['total']['energy']
 
-        energy = result['total']['energy']
+            # In percent
+            if energy:
+                for key in result['percent'].keys():
+                    result['percent'][key] = \
+                        result['total'][key] * ENERGY_FACTOR[key][unit] / energy * 100
 
-        # In percent
-        if energy:
-            for key in result['percent'].keys():
-                result['percent'][key] = \
-                    result['total'][key] * \
-                    ENERGY_FACTOR[key][unit] / energy * 100
+            # Per body weight
+            weight_entry = self.get_closest_weight_entry()
+            if weight_entry:
+                for key in result['per_kg'].keys():
+                    result['per_kg'][key] = result['total'][key] / weight_entry.weight
 
-        # Per body weight
-        weight_entry = self.get_closest_weight_entry()
-        if weight_entry:
-            for key in result['per_kg'].keys():
-                result['per_kg'][
-                    key] = result['total'][key] / weight_entry.weight
+            # Only 2 decimal places, anything else doesn't make sense
+            for key in result.keys():
+                for i in result[key]:
+                    result[key][i] = Decimal(result[key][i]).quantize(TWOPLACES)
 
-        # Only 2 decimal places, anything else doesn't make sense
-        for key in result.keys():
-            for i in result[key]:
-                result[key][i] = Decimal(result[key][i]).quantize(TWOPLACES)
+            # Else if the nutritional item is not available add it and cache
+            # it for future use.
+            cache.set(cache_mapper.get_nutrition_item(self.id), result)
+            cache.get(cache_mapper.get_nutrition_item(self.id))
+            cache.close()
 
         return result
+
+    @staticmethod
+    def get_nutritional_plans(user):
+
+        plans_dict = cache.get('nutritional_plans')
+        if not plans_dict:
+            plans_dict = {}
+            plans = NutritionPlan.objects.filter(user=user)[:150]
+            for plan in plans:
+                plans_dict["plan-{}".format(plan.id)] = plan
+                cache.set('nutritional_plans', plans_dict)
+        return plans_dict.values()
+
 
     def get_closest_weight_entry(self):
         '''
@@ -611,6 +625,8 @@ class Meal(models.Model):
 
         return nutritional_info
 
+    
+
 
 @python_2_unicode_compatible
 class MealItem(models.Model):
@@ -729,3 +745,21 @@ class MealItem(models.Model):
                 nutritional_info[i]).quantize(TWOPLACES)
 
         return nutritional_info
+
+@receiver(post_save, sender=NutritionPlan)
+@receiver(post_delete, sender=NutritionPlan)
+@receiver(post_save, sender=Meal)
+@receiver(post_delete, sender=Meal)
+@receiver(post_save, sender=MealItem)
+@receiver(post_delete, sender=MealItem)
+def handle_cache(sender, **kwargs):
+    '''
+    Delete cached data once the nutrition database is changed
+    '''
+    
+    model = kwargs.get('instance')
+    if isinstance(model, (Meal, MealItem)):
+        cache.delete(cache_mapper.get_nutrition_item(model.get_owner_object().id))
+    else:
+        
+        cache.delete(cache_mapper.get_nutrition_item(model.id))
