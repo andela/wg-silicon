@@ -51,7 +51,7 @@ def overview(request):
     template_data = {}
     template_data.update(csrf(request))
 
-    plans = NutritionPlan.objects.filter(user=request.user)
+    plans = NutritionPlan.get_nutritional_plans(user=request.user)
     template_data['plans'] = plans
 
     return render(request, 'plan/overview.html', template_data)
