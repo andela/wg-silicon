@@ -17,6 +17,11 @@
 import logging
 import csv
 import datetime
+import requests
+import os
+import base64
+import urllib
+import settings 
 
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -37,7 +42,8 @@ from rest_framework.decorators import api_view
 from formtools.preview import FormPreview
 
 from wger.weight.forms import WeightForm
-from wger.weight.models import WeightEntry
+from wger.weight.models import WeightEntry, Fitbit
+from wger.core.models import UserProfile
 from wger.weight import helpers
 from wger.utils.helpers import check_access
 from wger.utils.generic_views import WgerFormMixin
@@ -218,3 +224,130 @@ class WeightCsvImportFormPreview(FormPreview):
         return HttpResponseRedirect(
             reverse(
                 'weight:overview', kwargs={'username': request.user.username}))
+
+class FitbitWeightFormPreview(FormPreview):
+    preview_template = 'import_from_fitbit_form_preview.html'
+    form_template = 'import_from_fitbit_form.html'
+    def get_context(self, request, form):
+        '''
+        Context for template rendering.
+        '''
+        # Check if user has authorized wger to Fitbit
+        try:
+            profile = Fitbit.objects.get(user=request.user)
+        except Fitbit.DoesNotExist:
+            profile = None
+        fitbit_connect = True if profile is not None else False
+        fitbit_config = True if (os.getenv('FITBIT_CLIENT_ID') and
+                             os.getenv('FITBIT_CLIENT_SECRET')) is not None else False
+        return {
+            'form': form,
+            'stage_field': self.unused_name('stage'),
+            'state': self.state,
+            'fitbit_connect': fitbit_connect,
+            'fitbit_config': fitbit_config,
+            'form_action': reverse('weight:import-from-fitbit')
+        }
+
+    def process_preview(self, request, form, context):
+        # Retrieve user's weights from Fitbit on a specified date and period
+        spec_date = form.cleaned_data['date']
+        period = form.cleaned_data['period']
+        creds = Fitbit.objects.get(user=request.user)
+        try:
+            access_token = '{} {}'.format(creds.token_type, creds.access_token)
+            url = "https://api.fitbit.com/1/user/-/body/log/weight/date/{}/{}.json".format(spec_date, period)
+            r = requests.get(url,
+                                headers={'accept': 'application/json',
+                                        'authorization': access_token})
+            # Check unauthorized token
+            if r.status_code == 401:
+                creds.delete() # Delete existing credentials
+                return HttpResponseRedirect(reverse('weight:import-from-fitbit'))
+            if r.status_code == 200:
+                response = r.json()
+            else:
+                response = r.json()
+        except requests.HTTPError:
+            print('Something went wrong')
+            weight_list = []
+        if 'weight' in response:
+            weight_list = response['weight']
+        else:
+            weight_list = []
+        request.session['weight_list'] = weight_list
+        context['weight_list'] = weight_list
+        
+        return context
+
+    def done(self, request, cleaned_data):
+        weight_list = request.session['weight_list']
+        weight_entries = []
+        for log in weight_list:
+            try:
+                exist_entry = WeightEntry.objects.get(date=log['date'])
+                if exist_entry.weight == log['weight']:
+                    exist_entry.weight == log['weight']
+                    exist_entry.save()
+            except WeightEntry.DoesNotExist:
+                entry = WeightEntry(user=request.user, date=log['date'], weight=log['weight'])
+                entry.save()
+
+        return HttpResponseRedirect(
+            reverse(
+                'weight:overview', kwargs={'username': request.user.username}))
+
+
+@login_required
+def connectFitbit(request):
+    '''
+    Request access to Fitbit user details
+    '''
+    oauth_code = request.GET.get('code')
+    redirect_uri = '{}/en/weight/import-from-fitbit/authorize'.format(settings.SITE_URL)
+    expires_in = 31536000
+    if(oauth_code is None):
+        redirect_uri = '{}/en/weight/import-from-fitbit/authorize'.format(settings.SITE_URL)
+        data = {
+            'response_type':'code',
+            'client_id':os.getenv('FITBIT_CLIENT_ID'),
+            'redirect_uri': redirect_uri,
+            'scope':'activity heartrate location nutrition profile settings sleep social weight',
+            'expires_in': expires_in
+        }
+        payload = urllib.parse.urlencode(data)
+        url = "https://www.fitbit.com/oauth2/authorize?{}".format(payload)
+        return HttpResponseRedirect(url)
+    try:
+        code = oauth_code # From redirect uri
+        payload = {
+            'grant_type':'authorization_code',
+            'clientId': os.getenv('FITBIT_CLIENT_SECRET'),
+            'code': code,
+            'redirect_uri': redirect_uri,
+            'expires_in': expires_in
+        }
+        credentials = '{}:{}'.format(os.getenv('FITBIT_CLIENT_ID'),os.getenv('FITBIT_CLIENT_SECRET'))
+        basic_token = base64.standard_b64encode(bytes(credentials,'utf-8'))
+        basic_token = 'Basic {}'.format(basic_token.decode('utf-8'))
+        r = requests.post("https://api.fitbit.com/oauth2/token",
+                            data=payload,
+                            headers={'Content-Type': 'application/x-www-form-urlencoded',
+                                    'Authorization': basic_token})
+        response = r.json()
+        fitbit_creds = Fitbit(
+            user=request.user,
+            access_token=response['access_token'],
+            refresh_token=response['refresh_token'],
+            scopes=response['scope'],
+            token_type=response['token_type'],
+            expiration_date=datetime.datetime.now() + datetime.timedelta(seconds=int(response['expires_in'])),
+            fitbit_user_id=response['user_id']
+        )
+        fitbit_creds.save()
+    except requests.HTTPError:
+        print('Something went wrong')
+
+    return HttpResponseRedirect(
+            reverse(
+                'weight:import-from-fitbit'))

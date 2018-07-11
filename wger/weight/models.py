@@ -69,3 +69,42 @@ class WeightEntry(models.Model):
         Returns the object that has owner information
         '''
         return self
+
+class Fitbit(models.Model):
+    '''
+    Fitbit integration model
+    '''
+    user = models.OneToOneField(User, editable=False)
+
+    access_token = models.CharField(
+        max_length=200,
+        blank=False,
+        null=True)
+    '''Fitbit authorization token'''
+
+    refresh_token = models.CharField(
+        max_length=200,
+        blank=False,
+        null=True)
+    '''Fitbit refresh token'''
+
+    scopes = models.TextField(
+        blank=False,
+        null=True)
+    '''Fitbit refresh token'''
+
+    token_type = models.CharField(
+        max_length=128,
+        blank=False,
+        null=True)
+    '''Fitbit token type'''
+
+    expiration_date = models.DateTimeField(
+        editable=False, blank=False, null=True)
+    '''Fitbit token type'''
+
+    fitbit_user_id = models.CharField(
+        max_length=128,
+        blank=False,
+        null=True)
+    '''Fitbit user id'''

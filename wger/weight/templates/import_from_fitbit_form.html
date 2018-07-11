@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load wger_extras staticfiles %}
+{% load i18n %}
+
+{% block title %}{% trans "Import Fitbit weight" %}{% endblock %}
+
+{% block content %}
+{% if fitbit_connect and fitbit_config %}
+<form action="{{form_action}}"
+      method="post"
+      class="form-horizontal">
+
+    {% trans 'Submit' as submit_text %}
+    {% render_form_fields form submit_text %}
+</form>
+{% else %}
+  {% if fitbit_config %}
+    <h4>
+      {% blocktrans %}
+        You didn't connect your Fitbit account 
+      {% endblocktrans %}
+    </h4>
+    <p>
+      {% blocktrans %} When you connect your Fitbit account you'll be able 
+      to import weight logs from Fitbit to your wger account  {% endblocktrans %}
+    </p>
+    <a href="{% url 'weight:authorize-fitbit' %}" class="btn btn-primary">
+      {% trans 'Connect with Fitbit' %}
+    </a>
+    {% else %}
+      <h3>
+        {% blocktrans %} Wger is not yet configured for Fitbit support
+        {% endblocktrans %}
+      </h3>
+    {% endif %}
+{% endif %}
+{% endblock %}
+
+{% block sidebar %}
+<img alt="{{ image.exercise.name }}" class="media-object " style="max-width:100%; max-height:100%;" src="{% static 'images/fitbit-logo.png' %}">
+<br/>
+<p>
+  {% blocktrans %} Import weight logs from your fitbit account, this will store
+  <b> the weight</b> and
+  <b>the date</b> from your Fitbit account to wger account. {% endblocktrans %}
+</p>
+{% endblock %}

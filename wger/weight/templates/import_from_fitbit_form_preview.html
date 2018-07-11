@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load wger_extras staticfiles %}
+{% load i18n %}
+
+{% block title %}{% trans "Imported Fitbit entries" %}{% endblock %}
+
+{% block content %}
+{% if weight_list|length > 0 %}
+  <div class="alert alert-success">
+    {% trans "Weight logs retrieved from your Fitbit account" %}
+  </div>
+  <table class="table">
+    <tr>
+      <th>{% trans "Date" %}</th>
+      <th>{% trans "Weight" %}</th>
+    </tr>
+    {% for entry in weight_list %}
+        <tr>
+          <td>{{ entry.date }}</td>
+          <td>{{ entry.weight }}</td>
+        </tr>
+    {% endfor %}
+  </table>
+  <form action="{{form_action}}" method="post" class="form-horizontal">
+    {% trans 'Import' as submit_text %}
+    <input type="hidden" name="{{ stage_field }}" value="2" />
+    <input type="hidden" name="{{ hash_field }}" value="{{ hash_value }}" />
+    {% render_form_fields form submit_text %}
+  </form>
+  <hr/>
+{% else %}
+  <div class="alert alert-warning">
+    {% blocktrans %}There is not any weight log found in the range you specified{% endblocktrans %}
+  </div>
+{% endif %}
+
+<h4>{% trans "Retrieve weight from your Fitbit account again" %}</h4>
+<form action="{{form_action}}"
+      method="post"
+      class="form-horizontal">
+    <input type="hidden" name="{{ stage_field }}" value="1" />
+    {% trans 'Retrieve' as submit_text %}
+    {% render_form_fields form submit_text %}
+</form>
+
+{% endblock %}
+
+{% block sidebar %}
+<img alt="{{ image.exercise.name }}" class="media-object " style="max-width:100%; max-height:100%;" src="{% static 'images/fitbit-logo.png' %}">
+<br/>
+<p>
+  {% blocktrans %} Import weight logs from your fitbit account, this will store
+  <b> the weight</b> and
+  <b>the date</b> from your Fitbit account to wger account. {% endblocktrans %}
+</p><br>
+{% if weight_list|length > 0 %}
+  <i class="fa fa-exclamation-triangle"></i></i>&nbsp;
+  {% blocktrans %} 
+    If you import entries with the same date as the existing ones, they will overwrite existing them.
+  {% endblocktrans %}
+{% endif %}
+{% endblock %}
