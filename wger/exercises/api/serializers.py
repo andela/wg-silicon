@@ -46,7 +46,7 @@ class ExerciseInfoSerializer(serializers.ModelSerializer):
     Exercise info serialiser
     '''
 
-    image = serializers.StringRelatedField(
+    exercise_images_list = serializers.StringRelatedField(
         source='get_exercise_image', many=True
     )
     description = serializers.ReadOnlyField(source='description_clean')
@@ -54,8 +54,9 @@ class ExerciseInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Exercise
         fields = ('id', 'name', 'name_original', 'category', 'equipment',
-                  'description', 'muscles', 'muscles_secondary', 'image',
-                  'language', 'license', 'license_author', 'creation_date')
+                  'description', 'muscles', 'muscles_secondary',
+                  'exercise_images_list', 'language', 'license',
+                  'license_author', 'creation_date')
 
 
 class ExerciseCategorySerializer(serializers.ModelSerializer):
