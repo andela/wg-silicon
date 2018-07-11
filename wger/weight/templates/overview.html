@@ -99,6 +99,12 @@
     </button>
     <ul class="dropdown-menu">
         <li>
+            <a href="{% url 'weight:import-from-fitbit' %}">
+                <span class="{% fa_class 'upload' %}"></span>
+                {% trans "Import from Fitbit" %}
+            </a>
+        </li>
+        <li>
             <a href="{% url 'weight:export-csv' %}" target="_blank">
                 <span class="{% fa_class 'download' %}"></span>
                 {% trans "Export as CSV" %}

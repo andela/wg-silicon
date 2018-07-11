@@ -18,7 +18,7 @@
 from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
 
-from wger.weight.forms import WeightCsvImportForm
+from wger.weight.forms import WeightCsvImportForm, FitbitWeightForm
 from wger.weight import views
 
 urlpatterns = [
@@ -32,6 +32,11 @@ urlpatterns = [
         name='import-csv'),
     url(r'^overview/(?P<username>[\w.@+-]+)$', views.overview,
         name='overview'),
+    url(r'^import-from-fitbit/$',
+        login_required(views.FitbitWeightFormPreview(FitbitWeightForm)),
+        name='import-from-fitbit'),
+    # url(r'^import-from-fitbit$', views.connectFitbit, name='import-fitbit'),
+    url(r'^import-from-fitbit/authorize$', views.connectFitbit, name='authorize-fitbit'),
     # url(r'^overview/$',
     #     views.overview,
     #     name='overview'),

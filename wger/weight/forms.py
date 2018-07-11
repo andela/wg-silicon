@@ -51,3 +51,13 @@ class WeightForm(ModelForm):
         widgets = {
             'user': widgets.HiddenInput(),
         }
+
+class FitbitWeightForm(Form):
+    '''
+    A helper form to select date for the weight
+    '''
+    date = DateField(input_formats=DATE_FORMATS, widget=Html5DateInput())
+    period = forms.ChoiceField(widget = forms.Select(), 
+                     choices = ([('1d',_('1 Day')), ('7d',_('1 Week')),
+                                    ('30d',_('30 Days')),
+                                    ('1m',_('1 Month'))]), required = True)
