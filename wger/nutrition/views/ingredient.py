@@ -28,6 +28,7 @@ from django.utils.translation import ugettext_lazy, ugettext as _
 from django.views.generic import (DeleteView, CreateView, UpdateView, ListView)
 
 from wger.nutrition.forms import UnitChooserForm
+from wger.core.models import Language
 from wger.nutrition.models import Ingredient
 from wger.utils.generic_views import (WgerFormMixin, WgerDeleteMixin)
 from wger.utils.constants import PAGINATION_OBJECTS_PER_PAGE
@@ -56,10 +57,19 @@ class IngredientListView(ListView):
         (the user can also want to see ingredients in English, in addition to
         his native language, see load_ingredient_languages)
         '''
-        languages = load_ingredient_languages(self.request)
-        return (Ingredient.objects.filter(language__in=languages)
-                .filter(status__in=Ingredient.INGREDIENT_STATUS_OK).only(
-                    'id', 'name'))
+        language = None
+        lg_code = self.request.GET.get('lang', None)
+        if lg_code:
+            lang = Language.objects.filter(short_name=lg_code)
+            if lang.exists():
+                language = lang.first().id
+
+        if language:
+            return (Ingredient.objects.filter(language=language)
+                    .filter(status__in=Ingredient.INGREDIENT_STATUS_OK).only(
+                        'id', 'name'))
+        return (Ingredient.objects.filter(
+            status__in=Ingredient.INGREDIENT_STATUS_OK).only('id', 'name'))
 
     def get_context_data(self, **kwargs):
         '''
@@ -67,8 +77,15 @@ class IngredientListView(ListView):
         '''
         context = super(IngredientListView, self).get_context_data(**kwargs)
         context['show_shariff'] = True
+        context['lang'] = self.get_filter_language()
         return context
 
+    def get_filter_language(self):
+        lg_code = self.request.GET.get('lang', None)
+        lang = None
+        if lg_code:
+            lang = Language.objects.get(short_name=lg_code)
+        return lang
 
 def view(request, id, slug=None):
     template_data = {}
