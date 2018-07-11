@@ -58,9 +58,9 @@ class IngredientListView(ListView):
         his native language, see load_ingredient_languages)
         '''
         language = None
-        lg_code = self.request.GET.get('lang', None)
-        if lg_code:
-            lang = Language.objects.filter(short_name=lg_code)
+        language_code = self.request.GET.get('lang', None)
+        if language_code:
+            lang = Language.objects.filter(short_name=language_code)
             if lang.exists():
                 language = lang.first().id
 
@@ -81,10 +81,10 @@ class IngredientListView(ListView):
         return context
 
     def get_filter_language(self):
-        lg_code = self.request.GET.get('lang', None)
+        language_code = self.request.GET.get('lang', None)
         lang = None
-        if lg_code:
-            lang = Language.objects.get(short_name=lg_code)
+        if language_code:
+            lang = Language.objects.get(short_name=language_code)
         return lang
 
 def view(request, id, slug=None):

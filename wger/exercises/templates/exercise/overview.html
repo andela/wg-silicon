@@ -65,7 +65,7 @@ $(document).ready(function() {
 -->
 {% block content %}
 
-{% cache 1 exercise-overview language.id %}
+{% cache cache_timeout exercise-overview language.id %}
 {% regroup exercises by category as exercise_list %}
 <ul class="nav nav-tabs">
     {% for item in exercise_list %}
