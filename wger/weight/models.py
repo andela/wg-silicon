@@ -76,14 +76,12 @@ class Fitbit(models.Model):
     '''
     user = models.OneToOneField(User, editable=False)
 
-    access_token = models.CharField(
-        max_length=200,
+    access_token = models.TextField(
         blank=False,
         null=True)
     '''Fitbit authorization token'''
 
-    refresh_token = models.CharField(
-        max_length=200,
+    refresh_token = models.TextField(
         blank=False,
         null=True)
     '''Fitbit refresh token'''
@@ -104,7 +102,7 @@ class Fitbit(models.Model):
     '''Fitbit token type'''
 
     fitbit_user_id = models.CharField(
-        max_length=128,
+        max_length=255,
         blank=False,
         null=True)
     '''Fitbit user id'''
