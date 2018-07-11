@@ -291,6 +291,12 @@ class Exercise(AbstractSubmissionModel, AbstractLicenseModel, models.Model):
         '''
         return self.exerciseimage_set.accepted().filter(is_main=True).first()
 
+    def get_exercise_image(self):
+        '''
+        Return the main image for the exercise or None if nothing is found
+        '''
+        return self.exerciseimage_set.all()
+
     @property
     def description_clean(self):
         '''
@@ -373,7 +379,6 @@ class ExerciseImage(AbstractSubmissionModel, AbstractLicenseModel,
 
     exercise = models.ForeignKey(Exercise, verbose_name=_('Exercise'))
     '''The exercise the image belongs to'''
-
     image = models.ImageField(
         verbose_name=_('Image'),
         help_text=_('Only PNG and JPEG formats are supported'),
@@ -423,6 +428,9 @@ class ExerciseImage(AbstractSubmissionModel, AbstractLicenseModel,
 
         # And go on
         super(ExerciseImage, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return '%s' % (self.image)
 
     def delete(self, *args, **kwargs):
         '''
