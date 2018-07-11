@@ -379,7 +379,6 @@ class ExerciseImage(AbstractSubmissionModel, AbstractLicenseModel,
 
     exercise = models.ForeignKey(Exercise, verbose_name=_('Exercise'))
     '''The exercise the image belongs to'''
-    
     image = models.ImageField(
         verbose_name=_('Image'),
         help_text=_('Only PNG and JPEG formats are supported'),

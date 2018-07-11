@@ -23,7 +23,6 @@ from wger.exercises.models import (
     Equipment,
     ExerciseComment
 )
-from wger.core.api.serializers import LicenseSerializer, LanguageSerializer
 
 
 class ExerciseSerializer(serializers.ModelSerializer):
