@@ -308,6 +308,26 @@ $(document).ready(function() {
         </div>
     </div>
 </div>
+{% else %}
+<div class="row" style="margin-top:1em;">
+    <div class="col-xs-3">
+        <strong>{% trans "Muscles" %}:</strong>
+    </div>
+    <div class="col-xs-9">
+        <p>
+            {% trans "There are no muscles associated with this exercise" %}
+        </p>
+        <div>
+            <div style="width:1em;height:1em;background-color:#cc0000;float:left;margin-right:0.5em;"></div>
+            {% trans "Main muscles" %}
+        </div>
+
+        <div>
+            <div style="width:1em;height:1em;background-color:#f57900;float:left;margin-right:0.5em;"></div>
+            {% trans "Secondary muscles" %}
+        </div>
+    </div>
+</div>
 {% endif %}
 {% endwith %}
 {% endwith %} {# end musclelist #}
