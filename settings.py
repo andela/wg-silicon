@@ -25,7 +25,7 @@ DATABASES = {
 }
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '(y&bbhg3=8n^#1vsb)kdd$8ya24i-)l5y)f7fz&wmv=!cjq*_6'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # Your reCaptcha keys
 RECAPTCHA_PUBLIC_KEY = ''
@@ -39,7 +39,7 @@ SITE_URL = 'http://localhost:8000'
 
 # Path to uploaded files
 # Absolute filesystem path to the directory that will hold user-uploaded files.
-MEDIA_ROOT = '/Users/tonymputhia/.local/share/wger/media'
+MEDIA_ROOT = os.getenv('MEDIA_ROOT')
 MEDIA_URL = '/media/'
 
 # Allow all hosts to access the application. Change if used in production.
@@ -57,3 +57,7 @@ WGER_SETTINGS['EMAIL_FROM'] = 'wger Workout Manager <wger@example.com>'
 
 # Your twitter handle, if you have one for this instance.
 #WGER_SETTINGS['TWITTER'] = ''
+
+import django_heroku
+
+django_heroku.settings(locals())
