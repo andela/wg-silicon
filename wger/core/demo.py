@@ -220,9 +220,9 @@ def create_demo_entries(user):
 
     # Oatmeal
     if language.short_name == 'de':
-        ingredient = Ingredient.objects.get(pk=8197)
+        ingredient = Ingredient.objects.get(pk=2197)
     else:
-        ingredient = Ingredient.objects.get(pk=2126)
+        ingredient = Ingredient.objects.last()
 
     mealitem = MealItem()
     mealitem.meal = meal
@@ -233,9 +233,9 @@ def create_demo_entries(user):
 
     # Milk
     if language.short_name == 'de':
-        ingredient = Ingredient.objects.get(pk=8198)
+        ingredient = Ingredient.objects.get(pk=2198)
     else:
-        ingredient = Ingredient.objects.get(pk=154)
+        ingredient = Ingredient.objects.last()
 
     mealitem = MealItem()
     mealitem.meal = meal
@@ -246,9 +246,9 @@ def create_demo_entries(user):
 
     # Protein powder
     if language.short_name == 'de':
-        ingredient = Ingredient.objects.get(pk=8244)
+        ingredient = Ingredient.objects.get(pk=2244)
     else:
-        ingredient = Ingredient.objects.get(pk=196)
+        ingredient = Ingredient.objects.first()
 
     mealitem = MealItem()
     mealitem.meal = meal
@@ -267,12 +267,12 @@ def create_demo_entries(user):
 
     # Bread, in slices
     if language.short_name == 'de':
-        ingredient = Ingredient.objects.get(pk=8225)
+        ingredient = Ingredient.objects.get(pk=1225)
         unit = None
         amount = 80
     else:
-        ingredient = Ingredient.objects.get(pk=5370)
-        unit = IngredientWeightUnit.objects.get(pk=9874)
+        ingredient = Ingredient.objects.first()
+        unit = IngredientWeightUnit.objects.first()
         amount = 2
 
     mealitem = MealItem()
@@ -285,9 +285,9 @@ def create_demo_entries(user):
 
     # Turkey
     if language.short_name == 'de':
-        ingredient = Ingredient.objects.get(pk=8201)
+        ingredient = Ingredient.objects.get(pk=1201)
     else:
-        ingredient = Ingredient.objects.get(pk=1643)
+        ingredient = Ingredient.objects.first()
 
     mealitem = MealItem()
     mealitem.meal = meal
@@ -298,9 +298,9 @@ def create_demo_entries(user):
 
     # Cottage cheese
     if language.short_name == 'de':
-        ingredient = Ingredient.objects.get(pk=8222)  # TODO: check this!
+        ingredient = Ingredient.objects.get(pk=222)  # TODO: check this!
     else:
-        ingredient = Ingredient.objects.get(pk=17)
+        ingredient = Ingredient.objects.last()
 
     mealitem = MealItem()
     mealitem.meal = meal
@@ -311,12 +311,12 @@ def create_demo_entries(user):
 
     # Tomato, one
     if language.short_name == 'de':
-        ingredient = Ingredient.objects.get(pk=8217)
+        ingredient = Ingredient.objects.get(pk=2217)
         unit = None
         amount = 120
     else:
-        ingredient = Ingredient.objects.get(pk=3208)
-        unit = IngredientWeightUnit.objects.get(pk=5950)
+        ingredient = Ingredient.objects.first()
+        unit = IngredientWeightUnit.objects.first()
         amount = 1
 
     mealitem = MealItem()
