@@ -85,6 +85,7 @@ class ExerciseListView(ListView):
         context = super(ExerciseListView, self).get_context_data(**kwargs)
         context['show_shariff'] = True
         context['lang'] = self.get_filter_language()
+        context['cache_timeout'] = 1
         return context
 
     def get_filter_language(self):
