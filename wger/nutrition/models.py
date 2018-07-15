@@ -637,6 +637,7 @@ class MealItem(models.Model):
     meal = models.ForeignKey(
         Meal, verbose_name=_('Nutrition plan'), editable=False)
     ingredient = models.ForeignKey(Ingredient, verbose_name=_('Ingredient'))
+    time = Html5TimeField(null=True, blank=True, verbose_name=_('Time (approx)'))
     weight_unit = models.ForeignKey(
         IngredientWeightUnit,
         verbose_name=_('Weight unit'),
