@@ -249,11 +249,20 @@ class FitbitWeightFormPreview(FormPreview):
             'form_action': reverse('weight:import-from-fitbit')
         }
 
+    def get_initial(self,request):
+        try:
+            creds = Fitbit.objects.get(user=request.user)
+        except Fitbit.DoesNotExist:
+            return HttpResponseRedirect(reverse('weight:import-from-fitbit'))
+
     def process_preview(self, request, form, context):
         # Retrieve user's weights from Fitbit on a specified date and period
         spec_date = form.cleaned_data['date']
         period = form.cleaned_data['period']
-        creds = Fitbit.objects.get(user=request.user)
+        try:
+            creds = Fitbit.objects.get(user=request.user)
+        except Fitbit.DoesNotExist:
+            return HttpResponseRedirect(reverse('weight:import-from-fitbit'))
         try:
             access_token = '{} {}'.format(creds.token_type, creds.access_token)
             url = "https://api.fitbit.com/1/user/-/body/log/weight/date/{}/{}.json".format(spec_date, period)
@@ -262,7 +271,7 @@ class FitbitWeightFormPreview(FormPreview):
                                         'authorization': access_token})
             # Check unauthorized token
             if r.status_code == 401:
-                creds.delete() # Delete existing credentials
+                creds.delete() # Delete existing credentials if it invalid
                 return HttpResponseRedirect(reverse('weight:import-from-fitbit'))
             if r.status_code == 200:
                 response = r.json()
@@ -285,9 +294,9 @@ class FitbitWeightFormPreview(FormPreview):
         weight_entries = []
         for log in weight_list:
             try:
-                exist_entry = WeightEntry.objects.get(date=log['date'])
-                if exist_entry.weight == log['weight']:
-                    exist_entry.weight == log['weight']
+                exist_entry = WeightEntry.objects.get(date=log['date'], user=request.user)
+                if exist_entry.weight != log['weight']:
+                    exist_entry.weight = log['weight']
                     exist_entry.save()
             except WeightEntry.DoesNotExist:
                 entry = WeightEntry(user=request.user, date=log['date'], weight=log['weight'])

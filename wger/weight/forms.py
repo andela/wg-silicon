@@ -58,6 +58,5 @@ class FitbitWeightForm(Form):
     '''
     date = DateField(input_formats=DATE_FORMATS, widget=Html5DateInput())
     period = forms.ChoiceField(widget = forms.Select(), 
-                     choices = ([('1d',_('1 Day')), ('7d',_('1 Week')),
-                                    ('30d',_('30 Days')),
+                     choices = ([('1d',_('1 Day')), ('7d',_('1 Week')),('2w',_('2 Weeks')),
                                     ('1m',_('1 Month'))]), required = True)
