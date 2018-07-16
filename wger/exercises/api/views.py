@@ -16,6 +16,7 @@
 # along with Workout Manager.  If not, see <http://www.gnu.org/licenses/>.
 
 from rest_framework import viewsets
+from rest_framework.views import exception_handler
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, api_view
@@ -66,6 +67,15 @@ class ExerciseInfoViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Exercise.objects.all()
     serializer_class = ExerciseInfoSerializer
     ordering_fields = '__all__'
+
+
+def custom404(exc, context):
+    response = exception_handler(exc, context)
+    if response.status_code == 404:
+
+        return Response({
+            'detail': 'The exercise of that Id is not available'
+        })
 
 
 @api_view(['GET'])

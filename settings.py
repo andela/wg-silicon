@@ -54,7 +54,9 @@ if DEBUG:
 
 # Sender address used for sent emails
 WGER_SETTINGS['EMAIL_FROM'] = 'wger Workout Manager <wger@example.com>'
-
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'wger.exercises.api.views.custom404'
+}
 # Your twitter handle, if you have one for this instance.
 #WGER_SETTINGS['TWITTER'] = ''
 
