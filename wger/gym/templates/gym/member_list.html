@@ -20,7 +20,7 @@
 
 
 {% block content %}
-{% if perms.gym.manage_gym or perms.gym.gym_trainer %}
+{% if perms.gym.manage_gym or perms.gym.manage_gyms or perms.gym.gym_trainer %}
     {% include 'gym/partial_user_list.html' %}
 {% endif %}
 
@@ -44,8 +44,8 @@
         {{current_user.obj.pk}}
     </td>
     <td>
-        {{current_user.obj}}
-
+        <a href="{% url 'core:user:overview' current_user.obj.pk %}">{{current_user.obj}}</a>
+        
         {% if current_user.perms.gym_trainer %}
             <span class="label label-primary">{% trans "Trainer" %}</span>
         {% endif %}
