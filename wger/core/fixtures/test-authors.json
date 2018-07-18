@@ -1,0 +1,9 @@
+[
+    {
+        "model": "core.author",
+        "pk": 1,
+        "fields": {
+            "name": "test"
+        }
+    }
+]
