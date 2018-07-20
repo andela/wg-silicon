@@ -118,6 +118,27 @@ $(document).ready(function() {
     </div>
 </div>
 
+<div class="modal fade" id="export-workout-popup">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">{% trans "Export workout as JSON" %}</h4>
+            </div>
+            <div class="modal-body">
+                <p>{% trans "Export this workout as a JSON file." %}</p>
+                <a href="{% url 'manager:workout:export_json' workout.id %}" class="btn btn-block btn-default" >
+                   {% trans "Export" %}
+                </a>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 <div class="modal fade" id="export-ical-popup">
     <div class="modal-dialog">
@@ -239,6 +260,12 @@ an appointment for each training day with the appropriate exercises.{% endblockt
             </a>
         </li>
         {% endif %}
+        <li>
+            <a data-toggle="modal" data-target="#export-workout-popup">
+               <span class="{% fa_class 'download' %}"></span>
+               {% trans "Export workout as JSON" %}
+            </a>
+        </li>
         <li>
             <a data-toggle="modal" data-target="#export-ical-popup">
                <span class="{% fa_class 'calendar' %}"></span>

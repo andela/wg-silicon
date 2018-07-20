@@ -17,23 +17,27 @@
 import logging
 import uuid
 import datetime
+import json
+import os
 
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponse
 from django.template.context_processors import csrf
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.utils.translation import ugettext_lazy, ugettext as _
+from django.contrib import messages
 from django.contrib.auth.mixins import (LoginRequiredMixin)
 from django.contrib.auth.decorators import login_required
 from django.views.generic import DeleteView, UpdateView
 
 from wger.core.models import (RepetitionUnit, WeightUnit)
 from wger.manager.models import (Workout, WorkoutSession, WorkoutLog, Schedule,
-                                 Day)
+                                 Day, Set)
 from wger.manager.forms import (WorkoutForm, WorkoutSessionHiddenFieldsForm,
                                 WorkoutCopyForm)
 from wger.utils.generic_views import (WgerFormMixin, WgerDeleteMixin)
 from wger.utils.helpers import make_token
+from wger.settings_global import SITE_ROOT
 
 logger = logging.getLogger(__name__)
 
@@ -208,6 +212,73 @@ def add(request):
     return HttpResponseRedirect(workout.get_absolute_url())
 
 
+@login_required
+def export_json(request, pk):
+    '''
+    Implements the export of a workout as a JSON file
+    '''
+
+    workouts = Workout.objects.filter(user=request.user, id=pk)
+    exported_info = []
+
+    workout_info = {}
+    for workout in workouts:
+        workout_info['id'] = workout.id
+        workout_info['creation_date'] = str(workout.creation_date)
+        workout_info['comment'] = workout.comment
+        trainings = Day.objects.filter(training=workout.id)
+
+        if not trainings:
+            messages.info(request, 'You cannot export a workout without training days.'
+                                   ' Add training day.')
+            return HttpResponseRedirect(workout.get_absolute_url())
+
+        for training in trainings:
+            workout_info['workout_description'] = training.description
+            sets = Set.objects.filter(exerciseday_id=training)
+
+            workout_sets = []
+            for s in sets:
+                workout_sets.append(s.sets)
+            workout_info['number_of_sets'] = str(workout_sets)
+            workout_info['days'] = str(training.day.all())
+            set_exercises = workout.canonical_representation['day_list'][0]['set_list']
+            set_list = []
+
+            for set_exercise in set_exercises:
+                set_info = {}
+                list_of_exercises = []
+                exercise_info = {}
+
+                for info in set_exercise['exercise_list']:
+                    exercise_info['exercise'] = info['obj'].name
+                    exercise_info['sets'] = info['setting_list']
+                    exercise_info['comments'] = info['comment_list']
+                    list_of_exercises.append(exercise_info)
+                set_info['list_of_exercises'] = list_of_exercises
+                set_list.append(set_info)
+                workout_info['set_info'] = set_list
+
+            exported_info.append(workout_info)
+
+            exported_file = 'workouts-' + str(request.user) +\
+                            '-' + str(workout.id) + '-' +\
+                            datetime.datetime.now().strftime("%Y-%m-%d %H:%M").replace(' ', '::') +\
+                            '.json'
+
+            with open(exported_file, 'w') as json_file:
+                json.dump(exported_info, json_file, indent=4)
+
+            with open(exported_file, 'rb') as json_file:
+                response = HttpResponse(json_file.read())
+                response['content-type'] = 'application/json'
+                response['Content-Disposition'] = 'attachment; filename={0}'.format(exported_file)
+                response['Content-Length'] = len(response.content)
+                os.remove(exported_file)
+
+                return response
+
+
 class WorkoutDeleteView(WgerDeleteMixin, LoginRequiredMixin, DeleteView):
     '''
     Generic view to delete a workout routine
@@ -314,15 +385,15 @@ def timer(request, day_pk):
                     if request.user.userprofile.timer_active:
                         step_list.append({
                             'current_step':
-                            uuid.uuid4().hex,
+                                uuid.uuid4().hex,
                             'step_percent':
-                            0,
+                                0,
                             'step_nr':
-                            len(step_list) + 1,
+                                len(step_list) + 1,
                             'type':
-                            'pause',
+                                'pause',
                             'time':
-                            request.user.userprofile.timer_pause
+                                request.user.userprofile.timer_pause
                         })
 
         # Supersets need extra work to group the exercises and reps together
@@ -338,24 +409,24 @@ def timer(request, day_pk):
 
                     step_list.append({
                         'current_step':
-                        uuid.uuid4().hex,
+                            uuid.uuid4().hex,
                         'step_percent':
-                        0,
+                            0,
                         'step_nr':
-                        len(step_list) + 1,
+                            len(step_list) + 1,
                         'exercise':
-                        exercise,
+                            exercise,
                         'type':
-                        'exercise',
+                            'exercise',
                         'reps':
-                        reps,
+                            reps,
                         'rep_unit':
-                        rep_unit,
+                            rep_unit,
                         'weight_unit':
-                        weight_unit,
+                            weight_unit,
                         'weight':
-                        last_log.get_last_weight(exercise, reps,
-                                                 default_weight)
+                            last_log.get_last_weight(exercise, reps,
+                                                     default_weight)
                     })
 
                 if request.user.userprofile.timer_active:
@@ -381,7 +452,7 @@ def timer(request, day_pk):
     # Depending on whether there is already a workout session for today, update
     # the current one or create a new one (this will be the most usual case)
     if WorkoutSession.objects.filter(
-            user=request.user, date=datetime.date.today()).exists():
+        user=request.user, date=datetime.date.today()).exists():
         session = WorkoutSession.objects.get(
             user=request.user, date=datetime.date.today())
         url = reverse('manager:session:edit', kwargs={'pk': session.pk})
