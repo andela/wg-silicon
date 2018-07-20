@@ -15,9 +15,16 @@
 # You should have received a copy of the GNU Affero General Public License
 
 import logging
+import os
+import requests
+import urllib
+import base64
+import uuid
+from requests_oauthlib import OAuth1Session, OAuth1
 
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.http import (HttpResponseRedirect, HttpResponseForbidden,
+                        HttpResponse, HttpResponseBadRequest)
 from django.template.context_processors import csrf
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _, ugettext_lazy
@@ -540,3 +547,180 @@ class UserListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
             context['object_list']['members']
         }
         return context
+def oauthLogin(request, platform):
+    '''
+        Social networks login
+    '''
+    if platform=='facebook':
+        # Redirect to facebook login page
+        authorize_url = '{}/en/user/login/oauth/facebook/authorize'.format(os.getenv('SITE_URL'))
+        url = 'https://www.facebook.com/v3.0/dialog/oauth?client_id={}&redirect_uri={}&state={}&scope={}'.format(
+                os.getenv('FB_APP_ID'),
+                authorize_url,
+                uuid.uuid4().hex,
+                'email'
+            )
+        return HttpResponseRedirect(url)
+    if platform=='google':
+        # Redirect to Google login page
+        authorize_url = '{}/en/user/login/oauth/google/authorize'.format(os.getenv('SITE_URL'))
+        data = {
+            'scope':'https://www.googleapis.com/auth/userinfo.email',
+            'access_type':'offline',
+            'include_granted_scopes':'true',
+            'state':'state_parameter_passthrough_value',
+            'redirect_uri':authorize_url,
+            'response_type':'code',
+            'client_id': os.getenv('GOOGLE_CLIENT_ID')
+        }
+        payload = urllib.parse.urlencode(data)
+        url = 'https://accounts.google.com/o/oauth2/v2/auth?{}'.format(payload)
+        return HttpResponseRedirect(url)
+    if platform=='twitter':
+        # Redirect to Twitter Authorize page
+        client_key = os.getenv('TWITTER_API_KEY')
+        client_secret = os.getenv('TWITTER_API_SECRET')
+        request_token_url = 'https://api.twitter.com/oauth/request_token'
+        base_authorization_url = 'https://api.twitter.com/oauth/authorize'
+        oauth = OAuth1Session(client_key=client_key, client_secret=client_secret)
+        fetch_response = oauth.fetch_request_token(request_token_url)
+        resource_owner_key = fetch_response.get('oauth_token')
+        resource_owner_secret = fetch_response.get('oauth_token_secret')
+        authorization_url = oauth.authorization_url(base_authorization_url)
+
+        return HttpResponseRedirect(authorization_url)
+
+def oauthAuthorize(request, platform):
+    '''
+        Social networks login Authorization
+    '''
+    oauth_code = request.GET.get('code')
+    if oauth_code is None:
+        return HttpResponseBadRequest()
+    if platform == 'facebook':
+        # Implementation of login with Facebook (Facebook Oauth V3)
+        authorize_url = '{}/en/user/login/oauth/facebook/authorize'.format(os.getenv('SITE_URL'))
+        data = {
+            'client_id':os.getenv('FB_APP_ID'),
+            'redirect_uri': authorize_url,
+            'client_secret':os.getenv('FB_APP_SECRET'),
+            'code': oauth_code
+        }
+        payload = urllib.parse.urlencode(data)
+        url = 'https://graph.facebook.com/v3.0/oauth/access_token?{}'.format(payload)
+        req = requests.get(url)
+        response = req.json()
+        if 'access_token' in response:
+            access_token = '{} {}'.format('Bearer', response['access_token'])
+            user_details_url = 'https://graph.facebook.com/me?fields=email,first_name,last_name'
+            user_details_request = requests.get(user_details_url,
+                                    headers={'Accept': 'application/json',
+                                            'Authorization': access_token})
+            user_details = user_details_request.json()
+            details = {
+                'email': user_details['email'],
+            }
+            return socialLogin(request, details)
+        messages.error(request,
+                         _('Something went wrong!'))
+        return HttpResponseRedirect(reverse('core:user:login'))
+    
+    if platform == 'google':
+        # Implementation of login with Google (Google oauth 2)
+        authorize_url = '{}/en/user/login/oauth/google/authorize'.format(os.getenv('SITE_URL'))
+        data = {
+            'code': oauth_code,
+            'redirect_uri': authorize_url,
+            'client_id': os.getenv('GOOGLE_CLIENT_ID'),
+            'client_secret': os.getenv('GOOGLE_CLIENT_SECRET'),
+            'scope': 'email',
+            'grant_type': 'authorization_code'
+        }
+        payload = urllib.parse.urlencode(data)
+        req = requests.post("https://www.googleapis.com/oauth2/v4/token",
+                        data=data,
+                        headers={'Content-Type': 'application/x-www-form-urlencoded'})
+        response = req.json()
+        if 'access_token' in response:
+            access_token = '{} {}'.format('Bearer', response['access_token'])
+            user_details_url = 'https://www.googleapis.com/plus/v1/people/me'
+            user_details_request = requests.get(user_details_url,
+                                    headers={'Accept': 'application/json',
+                                            'Authorization': access_token})
+            user_details = user_details_request.json()
+
+            if 'emails' in user_details:
+                if not len(user_details['emails']) > 0:
+                    messages.error(request,
+                         _('No email returned from your google account'))
+                    return HttpResponseRedirect(reverse('core:user:login'))
+                details = {
+                    'email': user_details['emails'][0]['value'],
+                }
+                return socialLogin(request, details)
+        messages.error(request,
+                         _('Something went wrong!'))
+        return HttpResponseRedirect(reverse('core:user:login'))
+    if platform=='twitter':
+        # Implementation of login with Twitter (Twitter oauth 1)
+        client_key = os.getenv('TWITTER_API_KEY')
+        client_secret = os.getenv('TWITTER_API_SECRET')
+        request_token_url = 'https://api.twitter.com/oauth/request_token'
+        base_authorization_url = 'https://api.twitter.com/oauth/authorize'
+        redirected_url = request.build_absolute_uri()
+        oauth = OAuth1Session(client_key=client_key, client_secret=client_secret)
+        # Parse redirected url
+        try:
+            oauth_response = oauth.parse_authorization_response(redirected_url)
+            access_token_url = 'https://api.twitter.com/oauth/access_token'
+            auth_details = oauth.fetch_access_token(access_token_url)
+            oauth_instance = OAuth1(
+                        client_key=client_key,
+                        client_secret=client_secret,
+                        resource_owner_key=auth_details['oauth_token'],
+                        resource_owner_secret=auth_details['oauth_token_secret'])
+            details_url = 'https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true'
+            req = requests.get(url=details_url, auth=oauth_instance)
+            response = req.json()
+            details = {
+                    'email': response['email']
+            }
+            return socialLogin(request, details)
+        except:
+            print('Error')
+            messages.error(request,
+                         _('Something went wrong!'))
+            return HttpResponseRedirect(reverse('core:user:login'))
+
+def socialLogin(request, details):
+    '''
+        Authenticate user / From social networks logins
+    '''
+    username = details['email']
+    password = uuid.uuid4().hex
+    email = details['email']
+    try:
+        user = Django_User.objects.get(email=details['email'])
+    except Django_User.DoesNotExist:
+        user = Django_User.objects.create_user(username=username, email=email)
+        user.set_password(password)
+        user.save()
+        # Pre-set some values of the user's profile
+        language = Language.objects.get(
+            short_name=translation.get_language())
+        user.userprofile.notification_language = language
+        # Set default gym, if needed
+        gym_config = GymConfig.objects.get(pk=1)
+        if gym_config.default_gym:
+            user.userprofile.gym = gym_config.default_gym
+
+            # Create gym user configuration object
+            config = GymUserConfig()
+            config.gym = gym_config.default_gym
+            config.user = user
+            config.save()
+            user.userprofile.save()
+    user.backend = 'django.contrib.auth.backends.ModelBackend'
+    django_login(request, user)
+    messages.success(request, _('You were successfully logged in'))
+    return HttpResponseRedirect(reverse('core:dashboard'))

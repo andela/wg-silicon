@@ -40,6 +40,10 @@ patterns_language = [
 # sub patterns for user
 patterns_user = [
     url(r'^login$', user.login, name='login'),
+    url(r'^login/oauth/(?P<platform>(twitter|facebook|google))$', 
+        user.oauthLogin, name='oauth-login'),
+    url(r'^login/oauth/(?P<platform>(twitter|facebook|google))/authorize$', 
+        user.oauthAuthorize, name='oauth-authorize'),
     url(r'^logout$', user.logout, name='logout'),
     url(r'^delete$', user.delete, name='delete'),
     url(r'^(?P<user_pk>\d+)/delete$', user.delete, name='delete'),

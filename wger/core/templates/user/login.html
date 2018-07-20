@@ -14,8 +14,31 @@
     {% trans 'Login' as submit_text %}
     {% render_form_fields form submit_text %}
 </form>
+<hr>
+{# --- Social network login buttons --- #}
+<div class="row social-login-btns">
+    <p class="text-center">Login using social your networks</p><br>
+    <div class="col-md-4">
+        <a href="{% url 'core:user:oauth-login' 'twitter' %}" class="btn btn-block btn-default twitter">
+            <span class="{% fa_class 'twitter' %}"></span>
+            {% blocktrans %} Log in with{% endblocktrans %} Twitter
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="{% url 'core:user:oauth-login' 'facebook' %}" class="btn btn-block btn-default facebook">
+            <span class="{% fa_class 'facebook' %}"></span>
+            {% blocktrans %} Log in with{% endblocktrans %} Facebook
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="{% url 'core:user:oauth-login' 'google' %}" class="btn btn-block btn-default google">
+            <span class="{% fa_class 'google' %}"></span>
+            {% blocktrans %} Log in with{% endblocktrans %} Google
+        </a>
+    </div>
+</div>
+{# ---/ Social network login buttons --- #}
 {% endblock %}
-
 
 {% block sidebar %}
 <h4>{% trans "No account?" %}</h4>

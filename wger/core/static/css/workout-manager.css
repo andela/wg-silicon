@@ -292,3 +292,46 @@ div.info a, div.info a:hover, div.info a:active{
 #shoutout h2:first-child {
     margin-top: 0;
 }
+
+/**************************************************************
+ * 'Social network login buttons style
+ **************************************************************/
+.social-login-btns{
+  margin-top: 50px;
+}
+.social-login-btns .twitter{
+    background-color: #54acee;
+    color: #ffffff;
+    border-color: #54acee
+}
+.social-login-btns .facebook{
+    background-color: #4266b2;
+    color: #ffffff;
+    border-color: #4266b2;
+}
+.social-login-btns .google{
+    background-color: #eb4335;
+    color: #ffffff;
+    border-color: #eb4335;
+}
+.social-login-btns .twitter:hover,
+.social-login-btns .twitter:focus,
+.social-login-btns .twitter:active:focus{
+    background-color: #54acee;
+    color: #ffffff;
+    border-color: #54acee
+}
+.social-login-btns .facebook:hover,
+.social-login-btns .facebook:focus,
+.social-login-btns .facebook:active:focus{
+    background-color: #4266b2;
+    color: #ffffff;
+    border-color: #4266b2;
+}
+.social-login-btns .google:hover,
+.social-login-btns .google:focus,
+.social-login-btns .google:active:focus{
+    background-color: #eb4335;
+    color: #ffffff;
+    border-color: #eb4335;
+}
