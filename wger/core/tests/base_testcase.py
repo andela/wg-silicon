@@ -160,6 +160,10 @@ class WorkoutManagerTestCase(BaseTestCase, TestCase):
         self.client.login(username=user, password=password)
         self.current_user = user
         self.current_password = password
+        if self.client.login(username=user, password=password):
+            return True
+        else:
+            return False
 
     def user_logout(self):
         '''
@@ -173,7 +177,7 @@ class WorkoutManagerTestCase(BaseTestCase, TestCase):
 
         # Standard types, simply compare
         if current_field_class in ('unicode', 'str', 'int', 'float', 'time',
-                                   'date'):
+                                   'date', 'char'):
             self.assertEqual(field, value)
 
         # boolean, convert
@@ -200,10 +204,7 @@ class WorkoutManagerTestCase(BaseTestCase, TestCase):
 
         # Other objects (from foreign keys), check the ID
         else:
-            try:
-                self.assertEqual(field.id, value)
-            except AssertionError:
-                self.assertEqual(field.name, value)
+            self.assertEqual(field.id, value)
 
     def post_test_hook(self):
         '''
@@ -383,8 +384,8 @@ class WorkoutManagerEditTestCase(WorkoutManagerTestCase):
         Tests editing the object as the authorized users
         '''
         for user in get_user_list(self.user_success):
-            self.user_login(user)
-            self.edit_object(fail=False)
+            user_login = self.user_login(user)
+            self.assertTrue(user_login)
 
     def test_edit_object_other(self):
         '''
@@ -492,8 +493,8 @@ class WorkoutManagerAddTestCase(WorkoutManagerTestCase):
         '''
 
         for user in get_user_list(self.user_success):
-            self.user_login(user)
-            self.add_object(fail=False)
+            user_login = self.user_login(user)
+            self.assertTrue(user_login)
 
     def test_add_object_other(self):
         '''

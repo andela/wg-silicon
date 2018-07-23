@@ -116,6 +116,12 @@ class MealItemForm(forms.ModelForm):
         required=False)
     ingredient = forms.ModelChoiceField(
         queryset=Ingredient.objects.all(), widget=forms.HiddenInput)
+    MEALCHOICE = (
+        ('Eaten', 'Eaten'),
+        ('Planned', 'Planned')
+    )
+    meal_choice = forms.ChoiceField(
+        label='Meal Choice', widget=forms.Select, choices=MEALCHOICE)
 
     class Meta:
         model = MealItem
