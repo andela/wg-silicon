@@ -326,7 +326,8 @@ class WeightLogEntryEditTestCase(WorkoutManagerTestCase):
                 'repetition_unit': 2,
                 'weight_unit': 3,
                 'weight': 10,
-                'exercise': 1
+                'exercise': 1,
+                'workoutsession_id': 1
             })
 
         date_after = WorkoutLog.objects.get(pk=1).date

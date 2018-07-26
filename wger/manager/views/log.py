@@ -120,7 +120,7 @@ def add(request, pk):
     WorkoutLogFormSet = modelformset_factory(
         WorkoutLog,
         form=WorkoutLogForm,
-        exclude=('date', 'workout'),
+        exclude=('date', 'workout', 'workoutsession_id'),
         extra=total_sets)
     # Process the request
     if request.method == 'POST':
@@ -168,6 +168,7 @@ def add(request, pk):
             instance.save()
 
             # Log entries (only the ones with actual content)
+            workoutsession_id = instance
             instances = [i for i in formset.save(commit=False) if i.reps]
             for instance in instances:
                 if not instance.weight:
@@ -175,6 +176,7 @@ def add(request, pk):
                 instance.user = request.user
                 instance.workout = day.training
                 instance.date = log_date
+                instance.workoutsession_id = workoutsession_id
                 instance.save()
 
             return HttpResponseRedirect(
