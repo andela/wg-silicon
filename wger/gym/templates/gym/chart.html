@@ -1,0 +1,22 @@
+{% load i18n staticfiles %}
+
+<script>
+    var members_weight_entries = '{{members_weight_entries}}';
+    let type = 'bar';
+</script>
+<div class="pull-right">
+    Chart Type:
+    <button data-type='bar' class='plot-type selected'>Bar</button>
+    <button data-type='line' class='plot-type'>Line</button>
+</div>
+</hr>
+<canvas id="weightChart" width="600" height="400"></canvas>
+
+<style>
+    button.selected {
+        background-color: rgb(171, 156, 204);
+        border-color: rgb(114, 96, 153);
+    }
+</style>
+
+<script type="text/javascript" src="{% static 'js/weightComparison.js' %}"></script>

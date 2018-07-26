@@ -16,6 +16,7 @@
 import csv
 import datetime
 import logging
+import json
 
 from django.contrib.auth.mixins import (PermissionRequiredMixin,
                                         LoginRequiredMixin)
@@ -32,6 +33,7 @@ from django.views.generic import (ListView, DeleteView, CreateView, UpdateView)
 from wger.gym.forms import GymUserAddForm, GymUserPermisssionForm
 from wger.gym.helpers import (is_any_gym_admin,
                               get_permission_list)
+from wger.weight.models import WeightEntry
 from wger.gym.models import (Gym, GymAdminConfig, GymUserConfig)
 from wger.config.models import GymConfig as GlobalGymConfig
 from wger.utils.generic_views import (WgerFormMixin, WgerDeleteMixin,
@@ -110,12 +112,45 @@ class GymUserListView(LoginRequiredMixin, WgerMultiplePermissionRequiredMixin,
             })
         return out
 
+    def get_weight_comparison_data(self, pk):
+        gym_active_members = Gym.objects.get_members(pk, 'active')
+        entries = WeightEntry.objects.filter(user__in=gym_active_members).all()
+
+        dates = list(set([entry.date for entry in entries]))
+        dates.sort()
+        dates = self.get_unique_month(dates)
+        user_weights = {}
+        for entry in entries:
+            month_year = entry.date.strftime("%B %Y")
+            if entry.user.username not in user_weights:
+                user_weights[entry.user.username] = [None] * len(dates)
+                user_weights[
+                    entry.user.username][dates.index(month_year)
+                                          ] = int(entry.weight)
+            else:
+                user_weights[
+                    entry.user.username][dates.index(month_year)
+                                          ] = int(entry.weight)
+
+        return json.dumps({'dates': dates, 'user_weights': user_weights})
+
+    def get_unique_month(self, sequence):
+        seen, res = set(), list()
+        for date in sequence:
+            date = date.strftime("%B %Y")
+            if date not in seen:
+                seen.add(date)
+                res.append(date)
+        return res
+
     def get_context_data(self, **kwargs):
         '''
         Pass other info to the template
         '''
         context = super(GymUserListView, self).get_context_data(**kwargs)
         context['gym'] = Gym.objects.get(pk=self.kwargs['pk'])
+        context['members_weight_entries'] = self.get_weight_comparison_data(
+            pk=self.kwargs['pk'])
         context['admin_count'] = len(context['object_list']['admins'])
         context['user_count'] = len(context['object_list']['members'])
         context['active_users'] = self.users_status
