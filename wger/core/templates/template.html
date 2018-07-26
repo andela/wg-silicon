@@ -55,6 +55,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/shariff/build/shariff.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/metrics-graphics/dist/metricsgraphics.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/metricsgraphics-custom.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/chosen/chosen.min.css' %}">
     {% endcompress %}
 
     <link rel="icon" href="{% static 'images/favicon.png' %}" type="image/png">
@@ -213,6 +214,10 @@
 </footer>
 
 <script src="{% static 'bower_components/shariff/build/shariff.min.js' %}"></script>
+<script src="{% static 'bower_components/chosen/chosen.jquery.min.js' %}"></script>
+<script type="text/javascript">
+    $("#id_license_author").chosen({disable_search_threshold: 10});
+</script>
 </body>
 {% endspaceless_config %}
 </html>
