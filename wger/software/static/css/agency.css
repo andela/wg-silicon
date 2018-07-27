@@ -78,8 +78,12 @@ h6 {
 .bg-light-gray {
   background-color: #eeeeee;
 }
+
 .bg-darkest-gray {
   background-color: #222222;
+}
+.darker-blue {
+  background-color: #12243e;
 }
 .btn-primary {
   color: white;
@@ -127,16 +131,18 @@ fieldset[disabled] .btn-primary.active {
   background-color: white;
 }
 .btn-xl {
-  color: white;
-  background-color: #204a87;
+  background-color: white;
+  color: #204a87;
   border-color: #204a87;
   font-family: "Open Sans Bold", Arial, Helvetica, sans-serif;
   text-transform: uppercase;
   font-weight: 700;
-  border-radius: 3px;
+  border-radius: 30px;
   font-size: 18px;
   padding: 20px 40px;
+  margin-right: 10px;
 }
+
 .btn-xl:hover,
 .btn-xl:focus,
 .btn-xl:active,
@@ -253,7 +259,7 @@ fieldset[disabled] .btn-xl.active {
   }
 }
 header {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)), url('../images/main.jpg');
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)), url('../images/couple-main.jpg');
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-position: center center;
@@ -263,6 +269,7 @@ header {
   -o-background-size: cover;
   text-align: center;
   color: white;
+  max-height: 100vh;
 }
 header .intro-text {
   padding-top: 100px;
