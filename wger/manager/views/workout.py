@@ -35,7 +35,7 @@ from django.views.generic import DeleteView, UpdateView
 from wger.core.models import (RepetitionUnit, WeightUnit, DaysOfWeek)
 from wger.exercises.models import Exercise
 from wger.manager.models import (Workout, WorkoutSession, WorkoutLog, Schedule,
-                                 Day, Set, ImportJsonDocument)
+                                 Day, Set)
 from wger.manager.forms import (WorkoutForm, WorkoutSessionHiddenFieldsForm,
                                 WorkoutCopyForm)
 from wger.utils.generic_views import (WgerFormMixin, WgerDeleteMixin)
