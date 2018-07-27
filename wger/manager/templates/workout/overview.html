@@ -30,7 +30,15 @@
 
 
 {% block options %}
-<a href="{% url 'manager:workout:add' %}" class="btn btn-success btn-sm">
+<div class="btn-toolbar">
+<a href="{% url 'manager:workout:add' %}" class="btn btn-success btn-sm ">
     {% trans "Add workout" %}
 </a>
+<div class="container">
+<form action="{% url 'manager:workout:import_csv' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+    <input type="submit" value="Import Workout (.csv)" class="btn btn-success btn-sm" />
+    <p><input type="file" name="csv_file" /></p>
+</form>
+</div>
+</div>
 {% endblock %}
