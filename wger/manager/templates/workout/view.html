@@ -118,7 +118,7 @@ $(document).ready(function() {
     </div>
 </div>
 
-<div class="modal fade" id="export-workout-popup">
+<div class="modal fade" id="export-json-popup">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -138,7 +138,25 @@ $(document).ready(function() {
     </div>
 </div>
 
-
+<div class="modal fade" id="export-csv-popup">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">{% trans "Export workout as CSV" %}</h4>
+            </div>
+            <div class="modal-body">
+                <p>{% trans "Export this workout as a CSV file." %}</p>
+                <a href="{% url 'manager:workout:export_csv' %}" class="btn btn-block btn-default" >
+                   {% trans "Export" %}
+                </a>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="modal fade" id="export-ical-popup">
     <div class="modal-dialog">
@@ -261,9 +279,15 @@ an appointment for each training day with the appropriate exercises.{% endblockt
         </li>
         {% endif %}
         <li>
-            <a data-toggle="modal" data-target="#export-workout-popup">
+            <a data-toggle="modal" data-target="#export-json-popup">
                <span class="{% fa_class 'download' %}"></span>
                {% trans "Export workout as JSON" %}
+            </a>
+        </li>
+        <li>
+            <a data-toggle="modal" data-target="#export-csv-popup">
+               <span class="{% fa_class 'download' %}"></span>
+               {% trans "Export workout as CSV" %}
             </a>
         </li>
         <li>
