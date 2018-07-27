@@ -38,6 +38,8 @@ patterns_workout = [
     url(r'^overview$', workout.overview, name='overview'),
     url(r'^add$', workout.add, name='add'),
     url(r'^(?P<pk>\d+)/copy/$', workout.copy_workout, name='copy'),
+    url(r'^import_csv', workout.import_csv, name='import_csv'),
+    url(r'^export_csv', workout.export_csv, name='export_csv'),
     url(r'^(?P<pk>\d+)/edit/$', workout.WorkoutEditView.as_view(),
         name='edit'),
     url(r'^(?P<pk>\d+)/delete/$',
@@ -84,6 +86,7 @@ patterns_workout = [
     url(r'^(?P<pk>\d+)/export_json/$',
         workout.export_json,
         name='export_json')]
+
 
 # sub patterns for workout sessions
 patterns_session = [
