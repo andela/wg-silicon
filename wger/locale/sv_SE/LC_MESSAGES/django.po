@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # Olle Karlsson <olle.12.k@gmail.com>, 2015
 # oskarmalm <oskar.malm.wiklund@gmail.com>, 2014
@@ -13,7 +13,7 @@ msgstr ""
 "POT-Creation-Date: 2016-02-14 10:32+0100\n"
 "PO-Revision-Date: 2016-02-18 23:08+0000\n"
 "Last-Translator: ywecur <emilio.alvarez96@gmail.com>\n"
-"Language-Team: Swedish (Sweden) (http://www.transifex.com/rge/wger-workout-manager/language/sv_SE/)\n"
+"Language-Team: Swedish (Sweden) (https://translate.zanata.org/iteration/view/wg-silicon/v1?dswid=3298)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1244,8 +1244,8 @@ msgid "Github"
 msgstr "Github"
 
 #: core/templates/navigation.html:134 software/templates/contribute.html:82
-msgid "Translate with Transifex"
-msgstr "Översätt med Transifex"
+msgid "Translate with Zanata"
+msgstr "Översätt med Zanata"
 
 #: core/templates/navigation.html:149 core/templates/template.html:201
 #: core/templates/template_features.html:91
@@ -3790,9 +3790,9 @@ msgid ""
 "Do you want to use wger in your own language?\n"
 "Do you think the current translation could be improved?\n"
 "The translations are easily managed and edited online, if you are interested,\n"
-"go to the transifex site, request access and we will set everything\n"
+"go to the zanata site, request access and we will set everything\n"
 "up. "
-msgstr "Vill du använda wger på ditt eget språk?\nTror du att den aktuella översättningen kan förbättras?\nÖversättningar hanteras enkelt och redigeras online. Om du är intresserad, gå till webbplatsen transifex, begär åtkomst så kommer vi att inrätta allt. "
+msgstr "Vill du använda wger på ditt eget språk?\nTror du att den aktuella översättningen kan förbättras?\nÖversättningar hanteras enkelt och redigeras online. Om du är intresserad, gå till webbplatsen zanata, begär åtkomst så kommer vi att inrätta allt. "
 
 #: software/templates/contribute.html:88
 msgid "Code"

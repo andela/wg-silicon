@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # Armstrong Yan <yanqiangsdu@gmail.com>, 2016
 # rge <roland@geider.net>, 2016
@@ -12,7 +12,7 @@ msgstr ""
 "POT-Creation-Date: 2016-02-14 10:32+0100\n"
 "PO-Revision-Date: 2016-02-27 08:29+0000\n"
 "Last-Translator: Armstrong Yan <yanqiangsdu@gmail.com>\n"
-"Language-Team: Chinese (China) (http://www.transifex.com/rge/wger-workout-manager/language/zh_CN/)\n"
+"Language-Team: Chinese (China) (https://translate.zanata.org/iteration/view/wg-silicon/v1?dswid=3298)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1243,8 +1243,8 @@ msgid "Github"
 msgstr "Github"
 
 #: core/templates/navigation.html:134 software/templates/contribute.html:82
-msgid "Translate with Transifex"
-msgstr "在Transifex上翻译"
+msgid "Translate with Zanata"
+msgstr "在Zanata上翻译"
 
 #: core/templates/navigation.html:149 core/templates/template.html:201
 #: core/templates/template_features.html:91
@@ -3788,9 +3788,9 @@ msgid ""
 "Do you want to use wger in your own language?\n"
 "Do you think the current translation could be improved?\n"
 "The translations are easily managed and edited online, if you are interested,\n"
-"go to the transifex site, request access and we will set everything\n"
+"go to the zanata site, request access and we will set everything\n"
 "up. "
-msgstr "你想通过母语来使用wger吗?\n你认为现在wger的翻译有待提高吗?\n翻译过程是很容易在线管理和编辑的,如果你感兴趣,请访问transifex网站,\n发出翻译请求,然后我们会搞定一切."
+msgstr "你想通过母语来使用wger吗?\n你认为现在wger的翻译有待提高吗?\n翻译过程是很容易在线管理和编辑的,如果你感兴趣,请访问zanata网站,\n发出翻译请求,然后我们会搞定一切."
 
 #: software/templates/contribute.html:88
 msgid "Code"

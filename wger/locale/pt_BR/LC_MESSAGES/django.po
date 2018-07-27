@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # Danilo C. Silva, 2015-2016
 # Jefferson Campos <foguinho.peruca@gmail.com>, 2014-2015
@@ -16,7 +16,7 @@ msgstr ""
 "POT-Creation-Date: 2016-02-14 10:32+0100\n"
 "PO-Revision-Date: 2016-02-14 09:34+0000\n"
 "Last-Translator: rge <roland@geider.net>\n"
-"Language-Team: Portuguese (Brazil) (http://www.transifex.com/rge/wger-workout-manager/language/pt_BR/)\n"
+"Language-Team: Portuguese (Brazil) (https://translate.zanata.org/iteration/view/wg-silicon/v1?dswid=3298)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1247,8 +1247,8 @@ msgid "Github"
 msgstr "Github"
 
 #: core/templates/navigation.html:134 software/templates/contribute.html:82
-msgid "Translate with Transifex"
-msgstr "Traduza com Transifex"
+msgid "Translate with Zanata"
+msgstr "Traduza com Zanata"
 
 #: core/templates/navigation.html:149 core/templates/template.html:201
 #: core/templates/template_features.html:91
@@ -3793,9 +3793,9 @@ msgid ""
 "Do you want to use wger in your own language?\n"
 "Do you think the current translation could be improved?\n"
 "The translations are easily managed and edited online, if you are interested,\n"
-"go to the transifex site, request access and we will set everything\n"
+"go to the zanata site, request access and we will set everything\n"
 "up. "
-msgstr "Você que usar o wger no seu próprio idioma?\nVocê acha que o estado atual da tradução pde ser melhorado?\nAs traduções são fácilmente gerenciados e editadas online, se você estiver interessado,\nvá até o site transifex, solicite acesso e nós iremos preparar tudo\npara você trabalhar."
+msgstr "Você que usar o wger no seu próprio idioma?\nVocê acha que o estado atual da tradução pde ser melhorado?\nAs traduções são fácilmente gerenciados e editadas online, se você estiver interessado,\nvá até o site zanata, solicite acesso e nós iremos preparar tudo\npara você trabalhar."
 
 #: software/templates/contribute.html:88
 msgid "Code"

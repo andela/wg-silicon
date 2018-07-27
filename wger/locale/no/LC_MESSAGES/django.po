@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # w00p <kjetil@stiligt.no>, 2016
 # Stian Lundanes <stian@lundanes.com>, 2015
@@ -12,7 +12,7 @@ msgstr ""
 "POT-Creation-Date: 2016-02-14 10:32+0100\n"
 "PO-Revision-Date: 2016-07-08 05:55+0000\n"
 "Last-Translator: w00p <kjetil@stiligt.no>\n"
-"Language-Team: Norwegian (http://www.transifex.com/rge/wger-workout-manager/language/no/)\n"
+"Language-Team: Norwegian (https://translate.zanata.org/iteration/view/wg-silicon/v1?dswid=3298)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1243,8 +1243,8 @@ msgid "Github"
 msgstr "Github"
 
 #: core/templates/navigation.html:134 software/templates/contribute.html:82
-msgid "Translate with Transifex"
-msgstr "Oversett med Transifex"
+msgid "Translate with Zanata"
+msgstr "Oversett med Zanata"
 
 #: core/templates/navigation.html:149 core/templates/template.html:201
 #: core/templates/template_features.html:91
@@ -3789,9 +3789,9 @@ msgid ""
 "Do you want to use wger in your own language?\n"
 "Do you think the current translation could be improved?\n"
 "The translations are easily managed and edited online, if you are interested,\n"
-"go to the transifex site, request access and we will set everything\n"
+"go to the zanata site, request access and we will set everything\n"
 "up. "
-msgstr "Ønsker du å bruke wger på ditt eget språk?\nTror du dagens oversettelse kan forbedres?\nOversettelsene er enkel å håndtere og redigeres på nettet, hvis du er interessert,\ngå til transifex området, be om tilgang og vi vil sette alt\nopp for deg."
+msgstr "Ønsker du å bruke wger på ditt eget språk?\nTror du dagens oversettelse kan forbedres?\nOversettelsene er enkel å håndtere og redigeres på nettet, hvis du er interessert,\ngå til zanata området, be om tilgang og vi vil sette alt\nopp for deg."
 
 #: software/templates/contribute.html:88
 msgid "Code"

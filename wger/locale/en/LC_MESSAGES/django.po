@@ -1247,7 +1247,7 @@ msgid "Github"
 msgstr ""
 
 #: core/templates/navigation.html:134 software/templates/contribute.html:82
-msgid "Translate with Transifex"
+msgid "Translate with Zanata"
 msgstr ""
 
 #: core/templates/navigation.html:149 core/templates/template.html:201
@@ -3815,7 +3815,7 @@ msgid ""
 "Do you think the current translation could be improved?\n"
 "The translations are easily managed and edited online, if you are "
 "interested,\n"
-"go to the transifex site, request access and we will set everything\n"
+"go to the zanata site, request access and we will set everything\n"
 "up. "
 msgstr ""
 
