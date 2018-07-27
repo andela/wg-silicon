@@ -45,7 +45,7 @@ $(document).ready(function() {
 
     // Init the autocompleter
     $('#exercise-search').autocomplete({
-        serviceUrl: '{% url 'exercise-search' %}',
+        serviceUrl: "{% url 'exercise-search' %}",
         showNoSuggestionNotice: true,
         dataType: 'json',
         paramName: 'term',
@@ -55,6 +55,11 @@ $(document).ready(function() {
             window.location.href = '/exercise/' + suggestion.data.id + '/view/'
         }
     });
+
+        $(document).on('mouseenter', '[data-toggle="tab"], [data-hover="tab"]', function () {
+            $(this).tab('show');
+          });
+
 });
 </script>
 {% endblock %}
